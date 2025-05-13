@@ -20,10 +20,13 @@ int precio[3][4];
 void menu_principal() {
     int op;
     do {
-        printf("Bienvenido al menu principal\n");
-        printf("1-Menu de cargas\n");
-        printf("2-Menu de consultas\n");
-        printf("0-Salir\n");
+        printf("\n==============================\n");
+        printf("      MENU PRINCIPAL\n");
+        printf("==============================\n");
+        printf("1 - Menu de cargas\n");
+        printf("2 - Menu de consultas\n");
+        printf("0 - Salir\n");
+        printf("==============================\n");
         printf("Ingrese una opcion: ");
         scanf("%d", &op);
 
@@ -35,10 +38,10 @@ void menu_principal() {
                 menu_consultas();
                 break;
             case 0:
-                printf("Saliendo del programa...\n");
+                printf("\nSaliendo del programa...\n");
                 break;
             default:
-                printf("Opcion invalida, intente nuevamente.\n");
+                printf("\nOpcion invalida, intente nuevamente.\n");
         }
     } while (op != 0);
 }
@@ -46,11 +49,14 @@ void menu_principal() {
 void menu_cargas() {
     int op;
     do {
-        printf("Bienvenido al menu de cargas\n");
-        printf("1-Cargar unidades\n");
-        printf("2-Cargar costos de fabricacion\n");
-        printf("3-Cargar precio venta unitario\n");
-        printf("0-Salir\n");
+        printf("\n==============================\n");
+        printf("      MENU DE CARGAS\n");
+        printf("==============================\n");
+        printf("1 - Cargar unidades\n");
+        printf("2 - Cargar costos de fabricacion\n");
+        printf("3 - Cargar precio venta unitario\n");
+        printf("0 - Salir\n");
+        printf("==============================\n");
         printf("Ingrese una opcion: ");
         scanf("%d", &op);
 
@@ -65,55 +71,87 @@ void menu_cargas() {
                 cargar_precios();
                 break;
             case 0:
-                printf("Saliendo del menu de cargas...\n");
+                printf("\nSaliendo del menu de cargas...\n");
                 break;
             default:
-                printf("Opcion invalida, intente nuevamente.\n");
+                printf("\nOpcion invalida, intente nuevamente.\n");
         }
     } while (op != 0);
 }
 
 void cargar_unidades() {
-    printf("Cargando unidades producidas por las plantas...\n");
-    for (int planta = 0; planta < 3; planta++) {
-        for (int producto = 0; producto < 4; producto++) {
-            printf("Ingrese las unidades producidas por la planta %d para el producto %d: ", planta + 1, producto + 1);
-            scanf("%d", &unidades[planta][producto]);
+    printf("\nCargando unidades producidas...\n");
+    int planta, producto, valor;
+    printf("Ingrese el numero de planta (1-3): ");
+    scanf("%d", &planta);
+
+    if (planta >= 1 && planta <= 3) {
+        for (int i = 0; i < 4; i++)
+        {
+            printf("Ingrese las unidades del producto %d: ", i + 1);
+            scanf("%d", &valor);
+            unidades[planta - 1][i] = valor;
         }
+        
+        printf("\nUnidades cargadas correctamente para los productos de la planta %d", planta);
+    } else {
+        printf("\nError: Planta fuera de rango.\n");
     }
-    printf("Unidades cargadas correctamente.\n");
 }
 
 void cargar_costos() {
-    printf("Cargando costos de fabricacion...\n");
-    for (int planta = 0; planta < 3; planta++) {
-        for (int producto = 0; producto < 4; producto++) {
-            printf("Ingrese el costo de fabricacion para la planta %d y el producto %d: ", planta + 1, producto + 1);
-            scanf("%d", &costo[planta][producto]);
+    printf("\nCargando costos de fabricacion...\n");
+    int planta, producto, valor;
+    printf("Ingrese el numero de planta (1-3): ");
+    scanf("%d", &planta);
+    printf("Ingrese el numero de producto (1-4): ");
+    scanf("%d", &producto);
+    printf("Ingrese el costo de fabricacion: ");
+    scanf("%d", &valor);
+
+    if (planta >= 1 && planta <= 3) {
+        for (int i = 0; i < 4; i++)
+        {
+            printf("Ingrese el costo del producto %d: ", i + 1);
+            scanf("%d", &valor);
+            costo[planta - 1][i] = valor;
         }
+        
+        printf("\nCostos cargados correctamente para los productos de la planta %d", planta);
+    } else {
+        printf("\nError: Planta fuera de rango.\n");
     }
-    printf("Costos cargados correctamente.\n");
 }
 
 void cargar_precios() {
-    printf("Cargando precios de venta unitarios...\n");
-    for (int planta = 0; planta < 3; planta++) {
-        for (int producto = 0; producto < 4; producto++) {
-            printf("Ingrese el precio de venta unitario para la planta %d y el producto %d: ", planta + 1, producto + 1);
-            scanf("%d", &precio[planta][producto]);
-        }
+    printf("\nCargando precios de venta unitarios...\n");
+    int planta, producto, valor;
+    printf("Ingrese el numero de planta (1-3): ");
+    scanf("%d", &planta);
+    printf("Ingrese el numero de producto (1-4): ");
+    scanf("%d", &producto);
+    printf("Ingrese el precio de venta unitario: ");
+    scanf("%d", &valor);
+
+    if (planta >= 1 && planta <= 3 && producto >= 1 && producto <= 4) {
+        precio[planta - 1][producto - 1] = valor;
+        printf("\nPrecio cargado correctamente para la planta %d y producto %d.\n", planta, producto);
+    } else {
+        printf("\nError: Planta o producto fuera de rango.\n");
     }
-    printf("Precios cargados correctamente.\n");
 }
 
 void menu_consultas() {
     int op;
     do {
-        printf("Bienvenido al menu de consultas\n");
-        printf("1-Consultar planta con mayor rentabilidad\n");
-        printf("2-Consultar producto con menor margen economico\n");
-        printf("3-Calcular los promedios generales\n");
-        printf("0-Salir\n");
+        printf("\n==============================\n");
+        printf("      MENU DE CONSULTAS\n");
+        printf("==============================\n");
+        printf("1 - Consultar planta con mayor rentabilidad\n");
+        printf("2 - Consultar producto con menor margen economico\n");
+        printf("3 - Calcular los promedios generales\n");
+        printf("0 - Salir\n");
+        printf("==============================\n");
         printf("Ingrese una opcion: ");
         scanf("%d", &op);
 
@@ -128,10 +166,10 @@ void menu_consultas() {
                 calcular_promedios();
                 break;
             case 0:
-                printf("Saliendo del menu de consultas...\n");
+                printf("\nSaliendo del menu de consultas...\n");
                 break;
             default:
-                printf("Opcion invalida, intente nuevamente.\n");
+                printf("\nOpcion invalida, intente nuevamente.\n");
         }
     } while (op != 0);
 }
@@ -153,7 +191,7 @@ void consultar_mayor_rentabilidad() {
         }
     }
 
-    printf("La planta con mayor rentabilidad es la planta %d con una rentabilidad de %d.\n", planta_max + 1, max_rentabilidad);
+    printf("\nLa planta con mayor rentabilidad es la planta %d con una rentabilidad de %d.\n", planta_max + 1, max_rentabilidad);
 }
 
 void consultar_menor_margen() {
@@ -171,7 +209,7 @@ void consultar_menor_margen() {
         }
     }
 
-    printf("El producto con menor margen economico es el producto %d de la planta %d con un margen de %d.\n",
+    printf("\nEl producto con menor margen economico es el producto %d de la planta %d con un margen de %d.\n",
            producto_min + 1, planta_min + 1, min_margen);
 }
 
@@ -187,7 +225,7 @@ void calcular_promedios() {
         }
     }
 
-    printf("Promedio de unidades producidas: %.2f\n", total_unidades / (float)total_productos);
+    printf("\nPromedio de unidades producidas: %.2f\n", total_unidades / (float)total_productos);
     printf("Promedio de costos de fabricacion: %.2f\n", total_costos / (float)total_productos);
     printf("Promedio de precios de venta: %.2f\n", total_precios / (float)total_productos);
 }
