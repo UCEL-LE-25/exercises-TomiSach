@@ -114,10 +114,10 @@ void cargar_costos() {
         {
             printf("Ingrese el costo del producto %d: ", i + 1);
             scanf("%d", &valor);
-            costo[planta - 1][i] = valor;
+            precio[planta - 1][i] = valor;
         }
         
-        printf("\nCostos cargados correctamente para los productos de la planta %d", planta);
+        printf("\nPrecios cargados correctamente para los productos de la planta %d", planta);
     } else {
         printf("\nError: Planta fuera de rango.\n");
     }
