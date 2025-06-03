@@ -18,3 +18,10 @@ void registra_ventas(int M, Venta semanas[]) {
 
 
 
+
+
+
+
+
+
+
