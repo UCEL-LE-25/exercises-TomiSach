@@ -19,28 +19,75 @@ typedef struct {
     char modelo[20];
     int anio;
     float precio;
+    char descripcion[100];
     int disponible; // 1: si, 0: no
 } Auto;
 
 Auto autos[FILAS][COLUMNAS] = {
     {
-        {1, "Toyota", "Corolla", 2020, 20000, 1},
-        {2, "Ford", "Focus", 2018, 18000, 1},
-        {3, "Chevrolet", "Onix", 2019, 17000, 1}
+        {1, "Toyota", "Corolla", 2020, 20000, "Nafta, 45.000 km, Motor 1.8L", 1},
+        {2, "Ford", "Focus", 2018, 18000, "Diesel, 60.000 km, Motor 2.0L", 1},
+        {3, "Chevrolet", "Onix", 2019, 17000, "GNC, 30.000 km, Motor 1.4L", 1}
     },
     {
-        {4, "Honda", "Civic", 2021, 22000, 1},
-        {5, "Volkswagen", "Golf", 2017, 16000, 1},
-        {6, "Renault", "Clio", 2016, 14000, 1}
+        {4, "Honda", "Civic", 2021, 22000, "Diesel, 20.000 km, Motor 2.0L", 1},
+        {5, "Volkswagen", "Golf", 2017, 16000, "GNC, 70.000 km, Motor 1.6L", 1},
+        {6, "Renault", "Clio", 2016, 14000, "Nafta, 80.000 km, Motor 1.2L", 1}
     },
     {
-        {7, "Peugeot", "208", 2022, 21000, 1},
-        {8, "Fiat", "Cronos", 2020, 15000, 1},
-        {9, "Nissan", "Versa", 2019, 17500, 1}
+        {7, "Peugeot", "208", 2022, 21000, "GNC, 10.000 km, Motor 1.6L", 1},
+        {8, "Fiat", "Cronos", 2020, 15000, "Nafta, 25.000 km, Motor 1.3L", 1},
+        {9, "Nissan", "Versa", 2019, 17500, "Diesel, 40.000 km, Motor 1.6L", 1}
     }
 };
 
 int proximoID = 10;
+
+void reservarAutoPorID(int id) {
+    int reservado = 0;
+    if (id == 0) return;
+    for (int i = 0; i < FILAS && !reservado; i++) {
+        for (int j = 0; j < COLUMNAS && !reservado; j++) {
+            if (autos[i][j].disponible && autos[i][j].id == id) {
+                autos[i][j].disponible = 0;
+                printf("Vehiculo reservado exitosamente!\n");
+                reservado = 1;
+            }
+        }
+    }
+    if (!reservado) {
+        printf("No se encontro un vehiculo disponible con ese ID.\n");
+    }
+}
+
+void mostrarDetallesPorID() {
+    int id, encontrado = 0;
+    printf("\nIngrese el ID del vehiculo para ver detalles (0 para cancelar): ");
+    scanf("%d", &id);
+    if (id == 0) return;
+    for (int i = 0; i < FILAS && !encontrado; i++) {
+        for (int j = 0; j < COLUMNAS && !encontrado; j++) {
+            if (autos[i][j].disponible && autos[i][j].id == id) {
+                printf("\n======= DETALLES DEL VEHICULO =======\n");
+                printf("ID: %d\nMarca: %s\nModelo: %s\nAnio: %d\nPrecio: $%.2f\nDescripcion: %s\n",
+                    autos[i][j].id, autos[i][j].marca, autos[i][j].modelo,
+                    autos[i][j].anio, autos[i][j].precio, autos[i][j].descripcion);
+                printf("=====================================\n");
+                encontrado = 1;
+            }
+        }
+    }
+    if (!encontrado) {
+        printf("No se encontro un vehiculo con ese ID.\n");
+    } else {
+        char reservar;
+        printf("\nDesea reservar este vehiculo? (s/n): ");
+        scanf(" %c", &reservar);
+        if (reservar == 's' || reservar == 'S') {
+            reservarAutoPorID(id);
+        }
+    }
+}
 
 void listarAutos() {
     printf("======= MATRIZ DE AUTOS =======\n");
@@ -52,12 +99,19 @@ void listarAutos() {
                        autos[i][j].id, autos[i][j].marca, autos[i][j].modelo,
                        autos[i][j].anio, autos[i][j].precio);
             } else {
-                printf("VACIO\n");
+                printf("Reservado\n");
             }
         }
     }
     printf("================================\n");
+    char verMas;
+    printf("\nDesea ver detalles de algun vehiculo? (s/n): ");
+    scanf(" %c", &verMas);
+    if (verMas == 's' || verMas == 'S') {
+        mostrarDetallesPorID();
+    }
 }
+
 void altaAuto() {
     int cargado = 0;
     for (int i = 0; i < FILAS && !cargado; i++) {
@@ -73,6 +127,10 @@ void altaAuto() {
                 scanf("%d", &autos[i][j].anio);
                 printf("Precio: ");
                 scanf("%f", &autos[i][j].precio);
+                printf("Descripcion: ");
+                getchar(); // limpiar buffer
+                fgets(autos[i][j].descripcion, sizeof(autos[i][j].descripcion), stdin);
+                autos[i][j].descripcion[strcspn(autos[i][j].descripcion, "\n")] = 0;
                 printf("Auto registrado exitosamente. ID: %d\n", autos[i][j].id);
                 cargado = 1;
             }
@@ -118,6 +176,10 @@ void modificarAuto() {
                 scanf("%d", &autos[i][j].anio);
                 printf("Nuevo precio: ");
                 scanf("%f", &autos[i][j].precio);
+                printf("Nueva descripcion: ");
+                getchar(); // limpiar buffer
+                fgets(autos[i][j].descripcion, sizeof(autos[i][j].descripcion), stdin);
+                autos[i][j].descripcion[strcspn(autos[i][j].descripcion, "\n")] = 0;
                 printf("Auto modificado exitosamente.\n");
                 encontrado = 1;
             }
@@ -165,7 +227,14 @@ void busquedaAvanzada() {
         printf("No se encontraron autos con esos criterios.\n");
     }
     printf("=======================================\n");
+    char verMas;
+    printf("\n Desea ver detalles de algun vehiculo? (s/n): ");
+    scanf(" %c", &verMas);
+    if (verMas == 's' || verMas == 'S') {
+        mostrarDetallesPorID();
+    }
 }
+
 void busquedaFiltrada() {
     char marca[20] = "";
     int anioMin = 0;
@@ -181,7 +250,7 @@ void busquedaFiltrada() {
     marca[strcspn(marca, "\n")] = 0; // quitar salto de linea
 
     // Paso 2: Año mínimo
-    printf("Ingrese año minimo (0 para no filtrar): ");
+    printf("Ingrese anio minimo (0 para no filtrar): ");
     scanf("%d", &anioMin);
 
     // Paso 3: Precio máximo
@@ -212,8 +281,13 @@ void busquedaFiltrada() {
         printf("No se encontraron autos con esos criterios.\n");
     }
     printf("=======================================\n");
+    char verMas;
+    printf("\n Desea ver detalles de algun vehiculo? (s/n): ");
+    scanf(" %c", &verMas);
+    if (verMas == 's' || verMas == 'S') {
+        mostrarDetallesPorID();
+    }
 }
-
 
 int login() {
     char usuario[20], contrasena[20];
