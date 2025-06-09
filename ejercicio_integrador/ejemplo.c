@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h> // Para stat()
 
 #define FILAS 3
 #define COLUMNAS 3
@@ -26,26 +27,39 @@ typedef struct {
     int disponible;
 } Auto;
 
-Auto autos[FILAS][COLUMNAS] = {
-    {
-        {1, "Toyota", "Corolla", 2020, 20000, "Nafta, 45000 km, Motor 1.8L", 1},
-        {2, "Ford", "Focus", 2018, 18000, "Diesel, 60000 km, Motor 2.0L", 1},
-        {3, "Chevrolet", "Onix", 2019, 17000, "GNC, 30000 km, Motor 1.4L", 1}
-    },
-    {
-        {4, "Honda", "Civic", 2021, 22000, "Diesel, 20000 km, Motor 2.0L", 1},
-        {5, "Volkswagen", "Golf", 2017, 16000, "GNC, 70000 km, Motor 1.6L", 1},
-        {6, "Renault", "Clio", 2016, 14000, "Nafta, 80000 km, Motor 1.2L", 1}
-    },
-    {
-        {7, "Peugeot", "208", 2022, 21000, "GNC, 10000 km, Motor 1.6L", 1},
-        {8, "Fiat", "Cronos", 2020, 15000, "Nafta, 25000 km, Motor 1.3L", 1},
-        {9, "Nissan", "Versa", 2019, 17500, "Diesel, 40000 km, Motor 1.6L", 1}
-    }
-};
-
+Auto autos[FILAS][COLUMNAS];
 int proximoID = 10;
 
+// Verifica si el archivo existe
+int archivoExiste(const char *nombreArchivo) {
+    struct stat buffer;
+    return (stat(nombreArchivo, &buffer) == 0);
+}
+
+// Inicializa los autos por defecto
+void inicializarAutosPorDefecto() {
+    Auto autosPorDefecto[FILAS][COLUMNAS] = {
+        {
+            {1, "Toyota", "Corolla", 2020, 20000, "Nafta, 45000 km, Motor 1.8L", 1},
+            {2, "Ford", "Focus", 2018, 18000, "Diesel, 60000 km, Motor 2.0L", 1},
+            {3, "Chevrolet", "Onix", 2019, 17000, "GNC, 30000 km, Motor 1.4L", 1}
+        },
+        {
+            {4, "Honda", "Civic", 2021, 22000, "Diesel, 20000 km, Motor 2.0L", 1},
+            {5, "Volkswagen", "Golf", 2017, 16000, "GNC, 70000 km, Motor 1.6L", 1},
+            {6, "Renault", "Clio", 2016, 14000, "Nafta, 80000 km, Motor 1.2L", 1}
+        },
+        {
+            {7, "Peugeot", "208", 2022, 21000, "GNC, 10000 km, Motor 1.6L", 1},
+            {8, "Fiat", "Cronos", 2020, 15000, "Nafta, 25000 km, Motor 1.3L", 1},
+            {9, "Nissan", "Versa", 2019, 17500, "Diesel, 40000 km, Motor 1.6L", 1}
+        }
+    };
+    memcpy(autos, autosPorDefecto, sizeof(autos));
+    proximoID = 10;
+}
+
+// Esta función ya existe y NO se toca
 void guardarAutosEnArchivo() {
     FILE *f = fopen(ARCHIVO_AUTOS, "w");
     if (f != NULL) {
@@ -56,6 +70,16 @@ void guardarAutosEnArchivo() {
                         a.id, a.marca, a.modelo, a.anio, a.precio, a.descripcion, a.disponible);
             }
         }
+        fclose(f);
+    }
+}
+
+// NUEVA función para agregar un solo auto al final
+void guardarAutoEnArchivo(Auto *a) {
+    FILE *f = fopen(ARCHIVO_AUTOS, "a");
+    if (f != NULL) {
+        fprintf(f, "%d,%s,%s,%d,%.2f,%s,%d\n",
+                a->id, a->marca, a->modelo, a->anio, a->precio, a->descripcion, a->disponible);
         fclose(f);
     }
 }
@@ -126,18 +150,19 @@ void mostrarDetallesPorID() {
 
 void listarAutos() {
     printf("======= LISTADO DE AUTOS =======\n");
+    int hayDisponibles = 0;
     for (int i = 0; i < FILAS; i++) {
         for (int j = 0; j < COLUMNAS; j++) {
             Auto a = autos[i][j];
-            printf("ID: %d | %s %s | Anio: %d | Precio: $%.2f", 
-                   a.id, a.marca, a.modelo, a.anio, a.precio);
-            if (!a.disponible) {
-                printf(" | RESERVADO\n");
-                printf("  Descripcion: %s\n", a.descripcion);
-            } else {
-                printf("\n");
+            if (a.disponible) {
+                printf("ID: %d | %s %s | Anio: %d | Precio: $%.2f\n", 
+                       a.id, a.marca, a.modelo, a.anio, a.precio);
+                hayDisponibles = 1;
             }
         }
+    }
+    if (!hayDisponibles) {
+        printf("No hay autos disponibles.\n");
     }
     printf("================================\n");
 
@@ -168,7 +193,7 @@ void altaAuto() {
                 getchar();
                 fgets(autos[i][j].descripcion, sizeof(autos[i][j].descripcion), stdin);
                 autos[i][j].descripcion[strcspn(autos[i][j].descripcion, "\n")] = 0;
-                guardarAutosEnArchivo();
+                guardarAutoEnArchivo(&autos[i][j]);
                 printf("Auto registrado exitosamente. ID: %d\n", autos[i][j].id);
                 cargado = 1;
             }
@@ -337,7 +362,6 @@ void menuAdmin() {
 }
 
 void menuPrincipal() {
-    cargarAutosDesdeArchivo();
     int opcion;
     do {
         cleanScreen();
@@ -364,6 +388,12 @@ void menuPrincipal() {
 }
 
 int main() {
+    if (archivoExiste(ARCHIVO_AUTOS)) {
+        cargarAutosDesdeArchivo();
+    } else {
+        inicializarAutosPorDefecto();
+        guardarAutosEnArchivo();
+    }
     menuPrincipal();
     return 0;
 }
