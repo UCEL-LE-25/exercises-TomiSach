@@ -1,0 +1,8 @@
+2,Ford,Focus,2018,18000.00,Diesel,60000
+3,Chevrolet,Onix,2019,17000.00,GNC,30000
+4,Honda,Civic,2021,22000.00,Diesel,20000
+5,Volkswagen,Golf,2017,16000.00,GNC,70000
+6,Renault,Clio,2016,14000.00,Nafta,80000
+7,Peugeot,208,2022,21000.00,GNC,10000
+8,Fiat,Cronos,2020,15000.00,Nafta,25000
+9,Nissan,Versa,2019,17500.00,Diesel,0
